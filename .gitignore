@@ -1,0 +1,7 @@
+# Simulation data
+m5out/
+output.csv
+
+mibench/**/*.o
+*.pyc
+__pycache__/
