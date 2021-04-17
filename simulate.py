@@ -75,23 +75,29 @@ def simulate(policy, l1_cache_size, l2_cache_size, cache_type, binary):
     system.cpu.icache.connectCPU(system.cpu)
     system.cpu.dcache.connectCPU(system.cpu)
 
-    # Create a memory bus, a coherent crossbar, in this case
-    system.l2bus = L2XBar()
-
-    # Hook the CPU ports up to the l2bus
-    system.cpu.icache.connectBus(system.l2bus)
-    system.cpu.dcache.connectBus(system.l2bus)
-
-    # Create an L2 cache and connect it to the l2bus
-    system.l2cache = L2Cache(cache_config)
-    system.l2cache.replacement_policy = policy_obj
-    system.l2cache.connectCPUSideBus(system.l2bus)
-
     # Create a memory bus
     system.membus = SystemXBar()
 
-    # Connect the L2 cache to the membus
-    system.l2cache.connectMemSideBus(system.membus)
+    has_l2_cache = False
+    if has_l2_cache:
+        # Create a memory bus, a coherent crossbar, in this case
+        system.l2bus = L2XBar()
+
+        # Hook the CPU ports up to the l2bus
+        system.cpu.icache.connectBus(system.l2bus)
+        system.cpu.dcache.connectBus(system.l2bus)
+
+        # Create an L2 cache and connect it to the l2bus
+        system.l2cache = L2Cache(cache_config)
+        system.l2cache.replacement_policy = policy_obj
+        system.l2cache.connectCPUSideBus(system.l2bus)
+
+        # Connect the L2 cache to the membus
+        system.l2cache.connectMemSideBus(system.membus)
+    else:
+        # Connect the CPU ports to the membus
+        system.cpu.icache.connectBus(system.membus)
+        system.cpu.dcache.connectBus(system.membus)
 
     # create the interrupt controller for the CPU
     system.cpu.createInterruptController()

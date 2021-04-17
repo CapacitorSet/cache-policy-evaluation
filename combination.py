@@ -28,8 +28,8 @@ parser.add_option("-t", "--cache-type", default="data",
                     help="which L1 cache to use (comma-separated list; one or more of data,instruction). Default: data"),
 parser.add_option("-1", "--l1-cache-size", default="1024",
                     help="L1 cache sizes (comma-separated list in bytes). Default: 1024"),
-parser.add_option("-2", "--l2-cache-size", default="1024",
-                    help="L2 cache sizes (comma-separated list in bytes). Default: 1024"),
+# parser.add_option("-2", "--l2-cache-size", default="1024",
+#                     help="L2 cache sizes (comma-separated list in bytes). Default: 1024"),
 # parser.add_option("-b", "--branch-predictors", default="",
 #                     help="comma-separated list of branch prediction policies to simulate (default: all existing ones"),
 
@@ -61,16 +61,16 @@ outwriter = csv.writer(csv_outfile)
 policies = opts.policy.split(",")
 cache_types = opts.cache_type.split(",")
 l1_sizes = opts.l1_cache_size.split(",")
-l2_sizes = opts.l2_cache_size.split(",")
+# l2_sizes = opts.l2_cache_size.split(",")
 
 for policy in policies:
     if policy not in ("random","lru","treelru","lip","mru","lfu","fifo","secondchance","nru","rrip","brrip"):
         print("Policy {} is unknown." % policy)
 
-num_combinations = len(policies)*len(cache_types)*len(l1_sizes)*len(l2_sizes)
+num_combinations = len(policies)*len(cache_types)*len(l1_sizes) # *len(l2_sizes)
 print(f"Iterating over {num_combinations} combinations with {opts.jobs} jobs.")
 
-keys = ("policy", "cache_type", "l1_size", "l2_size")
+keys = ("policy", "cache_type", "l1_size")
 # write a header line to the csv
 outwriter.writerow(keys + ("num_cycles",))
 Entry = namedtuple("Entry", keys)
@@ -82,7 +82,7 @@ def process_single(values):
         i.value += 1
         print("[{:.0%}, {}/{}] ".format(i.value/num_combinations, i.value, num_combinations), entry)
 
-    output_filename = opts.prefix + entry.policy + "-" + entry.cache_type + "-" + entry.l1_size + "-" + entry.l2_size + ".txt"
+    output_filename = opts.prefix + entry.policy + "-" + entry.cache_type + "-" + entry.l1_size + ".txt"
     gem5_binary = [opts.path,
         "--quiet",
         "--stats-file", output_filename,
@@ -95,7 +95,6 @@ def process_single(values):
         "--policy", entry.policy,
         "--cache-type", entry.cache_type,
         "--l1-cache-size", entry.l1_size,
-        "--l2-cache-size", entry.l2_size,
         binary
     ], check=True)
 
@@ -106,5 +105,5 @@ def process_single(values):
             outwriter.writerow(values + (num_cycles,))
 
 with Pool(processes=opts.jobs) as pool:
-    iterator = itertools.product(policies, cache_types, l1_sizes, l2_sizes)
+    iterator = itertools.product(policies, cache_types, l1_sizes)
     pool.map(process_single, iterator)
