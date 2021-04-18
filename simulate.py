@@ -13,7 +13,7 @@ m5.util.addToPath(os.path.expanduser("~") + '/gem5/configs/')
 from caches import *
 
 
-def simulate(policy, l1_cache_size, l2_cache_size, cache_type, binary):
+def simulate(policy, l1_cache_size, binary):
     if policy == 'random':
         policy_obj = RandomRP()
     elif policy == 'lru':
@@ -66,10 +66,8 @@ def simulate(policy, l1_cache_size, l2_cache_size, cache_type, binary):
     cache_config = CacheConfig(l1_cache_size, l2_cache_size)
     system.cpu.icache = L1ICache(cache_config)
     system.cpu.dcache = L1DCache(cache_config)
-    if cache_type == "data":
-        system.cpu.dcache.replacement_policy = policy_obj
-    elif cache_type == "instruction":
-        system.cpu.icache.replacement_policy = policy_obj
+    system.cpu.dcache.replacement_policy = policy_obj
+    system.cpu.icache.replacement_policy = policy_obj
 
     # Connect the instruction and data caches to the CPU
     system.cpu.icache.connectCPU(system.cpu)

@@ -9,12 +9,12 @@ parser.add_option("-p", "--policy", type="string",default="lru",
 #                     help="comma-separated list of cache eviction policies to simulate (default: all existing ones"),
 # parser.add_option("-d", "--cache-sizes", default="128,256,512,1024",
 #                     help="comma-separated list of cache sizes to try, in bytes (default: 128,256,512,1024"),
-parser.add_option("-t", "--cache-type", default="data",
-                    help="which L1 cache to use (data or instruction, default: data)"),
+# parser.add_option("-t", "--cache-type", default="data",
+#                     help="which L1 cache to use (data or instruction, default: data)"),
 parser.add_option("-1", "--l1-cache-size", default=1024,
                     help="L1 cache size in bytes"),
-parser.add_option("-2", "--l2-cache-size", default=1024,
-                    help="L2 cache size in bytes"),
+# parser.add_option("-2", "--l2-cache-size", default=1024,
+#                     help="L2 cache size in bytes"),
 # parser.add_option("-b", "--branch-predictors", default="",
 #                     help="comma-separated list of branch prediction policies to simulate (default: all existing ones"),
 
@@ -33,4 +33,4 @@ elif len(args) > 1:
     print("Expected a single binary to run. Arguments are not supported.")
     exit(1)
 
-simulate(opts.policy, opts.l1_cache_size, opts.l2_cache_size, opts.cache_type, binary)
+simulate(opts.policy, opts.l1_cache_size, binary)
