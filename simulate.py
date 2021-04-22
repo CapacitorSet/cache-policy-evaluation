@@ -6,8 +6,9 @@ import m5
 from m5.objects import *
 
 # Add the common scripts to our path
-# todo: requires gem5 to be in ~
-m5.util.addToPath(os.path.expanduser("~") + '/gem5/configs/')
+gem5_path = os.environ.get("GEM5_PATH") or (os.path.expanduser("~") + '/gem5/configs/')
+print("gem5_path:", gem5_path)
+m5.util.addToPath(gem5_path)
 
 # import the caches which we made
 from caches import *
