@@ -108,14 +108,23 @@ def simulate(policy, l1_cache_size, binary):
         system.cpu.interrupts[0].int_master = system.membus.slave
         system.cpu.interrupts[0].int_slave = system.membus.master
 
+    # Create a DDR3 memory controller
+    if m5.defines.buildEnv['TARGET_ISA'].lower() == "alpha":
+        # syntax for gem5 v19, required for using ALPHA
+        print("Using old (gem5 v19) syntax for the memory controller, patch simulate.py if this is incorrect")
+        system.mem_ctrl = DDR3_1600_8x8()
+        system.mem_ctrl.range = system.mem_ranges[0]
+        system.mem_ctrl.port = system.membus.master
+    else:
+        # syntax for the latest version of gem5 (v21)
+        print("Using new (gem5 v21) syntax for the memory controller, patch simulate.py if this is incorrect")
+        system.mem_ctrl = MemCtrl()
+        system.mem_ctrl.dram = DDR3_1600_8x8()
+        system.mem_ctrl.dram.range = system.mem_ranges[0]
+        system.mem_ctrl.port = system.membus.master
+
     # Connect the system up to the membus
     system.system_port = system.membus.slave
-
-    # Create a DDR3 memory controller
-    system.mem_ctrl = MemCtrl()
-    system.mem_ctrl.dram = DDR3_1600_8x8()
-    system.mem_ctrl.dram.range = system.mem_ranges[0]
-    system.mem_ctrl.port = system.membus.master
 
     # Create a process for a simple "Hello World" application
     process = Process()
