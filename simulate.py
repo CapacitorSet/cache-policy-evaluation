@@ -13,8 +13,7 @@ m5.util.addToPath(gem5_path)
 # import the caches which we made
 from caches import *
 
-
-def simulate(policy, l1_cache_size, binary):
+def simulate(policy, l1_cache_size, predictor, binary):
     if policy == 'random':
         policy_obj = RandomRP()
     elif policy == 'lru':
@@ -40,8 +39,14 @@ def simulate(policy, l1_cache_size, binary):
     else:
         raise Exception("Unknown policy " + policy + ". Known policies:" + (",".join([it for it in globals() if it[-2:] == "RP"])))
 
-    if cache_type not in ("data", "instruction"):
-        raise Exception("--cache-type must be either 'data' or 'instruction'")
+    if predictor == 'local':
+        predictor_obj = LocalBP()
+    elif predictor == 'tournament':
+        predictor_obj = TournamentBP()
+    elif predictor == 'bimode':
+        predictor_obj = BiModeBP()
+    else:
+        raise Exception("Unknown predictor " + predictor + ". Known predictors: local,tournament,bimode")
 
     # create the system we are going to simulate
     system = System()
@@ -59,12 +64,15 @@ def simulate(policy, l1_cache_size, binary):
     system.cpu = TimingSimpleCPU()
     # system.cpu.wait_for_remote_gdb = True
 
+    system.cpu.branchPred = predictor_obj
+
     # Create an L1 instruction and data cache
     class CacheConfig():
         def __init__(self, l1_size, l2_size):
             self.l1i_size = self.l1d_size = str(l1_size) + "B"
             self.l2_size = str(l2_size) + "B"
-    cache_config = CacheConfig(l1_cache_size, l2_cache_size)
+    # cache_config = CacheConfig(l1_cache_size, l2_cache_size)
+    cache_config = CacheConfig(l1_cache_size, 0)
     system.cpu.icache = L1ICache(cache_config)
     system.cpu.dcache = L1DCache(cache_config)
     system.cpu.dcache.replacement_policy = policy_obj

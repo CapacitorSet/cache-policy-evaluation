@@ -15,8 +15,8 @@ parser.add_option("-1", "--l1-cache-size", default=1024,
                     help="L1 cache size in bytes"),
 # parser.add_option("-2", "--l2-cache-size", default=1024,
 #                     help="L2 cache size in bytes"),
-# parser.add_option("-b", "--branch-predictors", default="",
-#                     help="comma-separated list of branch prediction policies to simulate (default: all existing ones"),
+parser.add_option("-b", "--branch-predictor", default="local",
+                    help="Branch predictor (one of local, tournament, bimode)"),
 
 (opts, args) = parser.parse_args()
 
@@ -33,4 +33,4 @@ elif len(args) > 1:
     print("Expected a single binary to run. Arguments are not supported.")
     exit(1)
 
-simulate(opts.policy, opts.l1_cache_size, binary)
+simulate(opts.policy, opts.l1_cache_size, opts.branch_predictor, binary)
