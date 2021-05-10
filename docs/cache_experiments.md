@@ -54,20 +54,9 @@ If you want to conduct deeper analyses, the full gem5 output is provided. In `m5
 ```
 root@4a3c2463127c:/gem5# python3 project/combination.py -g /gem5/source/build/ALPHA/gem5.opt --l1-size=1024,2048,4096,8192,16384,32768,65536 --l2-size=0 --policy=lru /gem5/project/mibench/automotive/susan/susan -o susan.csv -q
 Iterating over 7 combinations with 2 jobs.
-[14%, 1/7]  Entry(policy='lru', l1_size='1024', l2_size='0', predictor='local', btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
-[29%, 2/7]  Entry(policy='lru', l1_size='2048', l2_size='0', predictor='local', btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
-Redirecting stdout and stderr to /dev/null
-Redirecting stdout and stderr to /dev/null
-[43%, 3/7]  Entry(policy='lru', l1_size='4096', l2_size='0', predictor='local', btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
-[57%, 4/7]  Entry(policy='lru', l1_size='8192', l2_size='0', predictor='local', btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
-Redirecting stdout and stderr to /dev/null
-Redirecting stdout and stderr to /dev/null
-[71%, 5/7]  Entry(policy='lru', l1_size='16384', l2_size='0', predictor='local', btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
-[86%, 6/7]  Entry(policy='lru', l1_size='32768', l2_size='0', predictor='local', btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
-Redirecting stdout and stderr to /dev/null
-Redirecting stdout and stderr to /dev/null
-[100%, 7/7]  Entry(policy='lru', l1_size='65536', l2_size='0', predictor='local', btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
-Redirecting stdout and stderr to /dev/null
+
+[simulation output]
+
 root@4a3c2463127c:/gem5# ls m5out/
 config.ini   susan-lru-local-1024-0.txt   susan-lru-local-2048-0.txt   susan-lru-local-4096-0.txt   susan-lru-local-8192-0.txt
 config.json  susan-lru-local-16384-0.txt  susan-lru-local-32768-0.txt  susan-lru-local-65536-0.txt
