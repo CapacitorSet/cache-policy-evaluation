@@ -1971,7 +1971,7 @@ main(argc, argv)
   char  *argv [];
 {
   */
-char *argv[] = {"", "/gem5/sanchez/mibench/automotive/susan/input_small.pgm", "/tmp/mibench-output.pgm"};
+char *argv[] = {"", "/gem5/project/mibench/automotive/susan/input_small.pgm", "/tmp/mibench-output.pgm"};
 int argc = 3;
 int main() {
 /* {{{ vars */

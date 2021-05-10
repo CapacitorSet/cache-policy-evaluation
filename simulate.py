@@ -6,47 +6,47 @@ import m5
 from m5.objects import *
 
 # Add the common scripts to our path
-gem5_path = os.environ.get("GEM5_PATH") or (os.path.expanduser("~") + '/gem5/configs/')
+gem5_path = os.environ.get("GEM5_PATH") or ('/gem5/source/configs/')
 print("gem5_path:", gem5_path)
 m5.util.addToPath(gem5_path)
 
 # import the caches which we made
 from caches import *
 
-def simulate(policy, l1_cache_size, predictor, binary):
-    if policy == 'random':
+def simulate(opts, binary):
+    if opts.policy == 'random':
         policy_obj = RandomRP()
-    elif policy == 'lru':
+    elif opts.policy == 'lru':
         policy_obj = LRURP()
-    elif policy == 'treelru':
+    elif opts.policy == 'treelru':
         policy_obj = TreePLRURP()
-    elif policy == 'lip':
+    elif opts.policy == 'lip':
         policy_obj = LIPRP()
-    elif policy == 'mru':
+    elif opts.policy == 'mru':
         policy_obj = MRURP()
-    elif policy == 'lfu':
+    elif opts.policy == 'lfu':
         policy_obj = LFURP()
-    elif policy == 'fifo':
+    elif opts.policy == 'fifo':
         policy_obj = FIFORP()
-    elif policy == 'secondchance':
+    elif opts.policy == 'secondchance':
         policy_obj = SecondChanceRP()
-    elif policy == 'nru':
+    elif opts.policy == 'nru':
         policy_obj = NRURP()
-    elif policy == 'rrip':
+    elif opts.policy == 'rrip':
         policy_obj = RRIPRP()
-    elif policy == 'brrip':
+    elif opts.policy == 'brrip':
         policy_obj = BRRIPRP()
     else:
-        raise Exception("Unknown policy " + policy + ". Known policies:" + (",".join([it for it in globals() if it[-2:] == "RP"])))
+        raise Exception("Unknown policy " + policy + ". Known policies: " + (", ".join([it for it in globals() if it[-2:] == "RP"])))
 
-    if predictor == 'local':
+    if opts.predictor == 'local':
         predictor_obj = LocalBP()
-    elif predictor == 'tournament':
+    elif opts.predictor == 'tournament':
         predictor_obj = TournamentBP()
-    elif predictor == 'bimode':
+    elif opts.predictor == 'bimode':
         predictor_obj = BiModeBP()
     else:
-        raise Exception("Unknown predictor " + predictor + ". Known predictors: local,tournament,bimode")
+        raise Exception("Unknown predictor " + predictor + ". Known predictors: local, tournament, bimode")
 
     # create the system we are going to simulate
     system = System()
@@ -71,8 +71,7 @@ def simulate(policy, l1_cache_size, predictor, binary):
         def __init__(self, l1_size, l2_size):
             self.l1i_size = self.l1d_size = str(l1_size) + "B"
             self.l2_size = str(l2_size) + "B"
-    # cache_config = CacheConfig(l1_cache_size, l2_cache_size)
-    cache_config = CacheConfig(l1_cache_size, 0)
+    cache_config = CacheConfig(opts.l1_size, opts.l2_size)
     system.cpu.icache = L1ICache(cache_config)
     system.cpu.dcache = L1DCache(cache_config)
     system.cpu.dcache.replacement_policy = policy_obj
@@ -85,7 +84,7 @@ def simulate(policy, l1_cache_size, predictor, binary):
     # Create a memory bus
     system.membus = SystemXBar()
 
-    has_l2_cache = False
+    has_l2_cache = str(opts.l2_size) != "0"
     if has_l2_cache:
         # Create a memory bus, a coherent crossbar, in this case
         system.l2bus = L2XBar()

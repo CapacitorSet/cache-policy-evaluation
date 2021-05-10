@@ -56,7 +56,7 @@ You'll probably want to clone this repo into GEM5_WORKDIR so that it is accessib
 # on the host
 git clone https://github.com/CapacitorSet/cache-policy-evaluation $GEM5_WORKDIR/project
 # in the docker container
-alias gem5=/gem5/build/ALPHA/gem5.opt
+alias gem5=/gem5/source/build/ALPHA/gem5.opt
 cd /gem5/project
 
 /gem5/build/ALPHA/gem5.opt standalone.py --help
