@@ -5,14 +5,10 @@ import presets
 
 parser = OptionParser()
 parser.set_usage("Usage: %prog [options] <binary to execute>")
+parser.add_option("-s", "--speed", type="string",default="1GHz",
+                    help="Clock speed (given with unit, no spaces). Default: 1GHz")
 parser.add_option("-p", "--policy", type="string",default="lru",
                     help="L1 I-cache eviction policy (one of random, lru, treelru, lip, mru, lfu, fifo, secondchance, nru, rrip, brrip). Default: lru")
-# parser.add_option("-c", "--cache-policies", default="random,lru,treelru,lip,mru,lfu,fifo,secondchance,nru,rrip,brrip",
-#                     help="comma-separated list of cache eviction policies to simulate (default: all existing ones"),
-# parser.add_option("-d", "--cache-sizes", default="128,256,512,1024",
-#                     help="comma-separated list of cache sizes to try, in bytes (default: 128,256,512,1024"),
-# parser.add_option("-t", "--cache-type", default="data",
-#                     help="which L1 cache to use (data or instruction, default: data)"),
 parser.add_option("-1", "--l1-size", default=1024,
                     help="L1 cache size in bytes"),
 parser.add_option("-2", "--l2-size", default=1024,
@@ -20,7 +16,7 @@ parser.add_option("-2", "--l2-size", default=1024,
 parser.add_option("-b", "--predictor", default="local",
                     help="Branch predictor (one of local, tournament, bimode)"),
 parser.add_option("-P", "--preset", type="string",default="",
-                    help="Use a known processor (one of cortex-a8-1, cortex-a8-2, cortex-a8-3, cortex-a9, stm32mp1, stm32h7). Default: no preset")
+                    help="Use a known processor (one of cortex-a8, cortex-a9, stm32mp1, stm32h7). Default: no preset")
 
 (opts, args) = parser.parse_args()
 
@@ -39,12 +35,8 @@ elif len(args) > 1:
 
 if opts.preset != "":
     print("[!] Using a preset; other command line flags will be ignored.")
-    if opts.preset == "cortex-a8-1":
-        opts = presets.cortex_a8[0]
-    elif opts.preset == "cortex-a8-2":
-        opts = presets.cortex_a8[1]
-    elif opts.preset == "cortex-a8-3":
-        opts = presets.cortex_a8[2]
+    if opts.preset == "cortex-a8":
+        opts = presets.cortex_a8
     elif opts.preset == "cortex-a9":
         opts = presets.cortex_a9
     elif opts.preset == "stm32mp1":
@@ -54,6 +46,5 @@ if opts.preset != "":
     else:
         print("Unknown preset " + opts.preset)
         exit(1)
-
 
 simulate(opts, binary)

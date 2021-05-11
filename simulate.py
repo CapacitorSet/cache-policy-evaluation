@@ -37,7 +37,7 @@ def simulate(opts, binary):
     elif opts.policy == 'brrip':
         policy_obj = BRRIPRP()
     else:
-        raise Exception("Unknown policy " + policy + ". Known policies: " + (", ".join([it for it in globals() if it[-2:] == "RP"])))
+        raise Exception("Unknown policy " + opts.policy + ". Known policies: " + (", ".join([it for it in globals() if it[-2:] == "RP"])))
 
     if opts.predictor == 'local':
         predictor_obj = LocalBP()
@@ -46,14 +46,14 @@ def simulate(opts, binary):
     elif opts.predictor == 'bimode':
         predictor_obj = BiModeBP()
     else:
-        raise Exception("Unknown predictor " + predictor + ". Known predictors: local, tournament, bimode")
+        raise Exception("Unknown predictor " + opts.predictor + ". Known predictors: local, tournament, bimode")
 
     # create the system we are going to simulate
     system = System()
 
     # Set the clock fequency of the system (and all of its children)
     system.clk_domain = SrcClockDomain()
-    system.clk_domain.clock = '1GHz'
+    system.clk_domain.clock = opts.speed or '1GHz'
     system.clk_domain.voltage_domain = VoltageDomain()
 
     # Set up the system
