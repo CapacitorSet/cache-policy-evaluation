@@ -39,6 +39,7 @@ def simulate(opts, binary):
     else:
         raise Exception("Unknown policy " + opts.policy + ". Known policies: " + (", ".join([it for it in globals() if it[-2:] == "RP"])))
 
+    """
     if opts.predictor == 'local':
         predictor_obj = LocalBP()
     elif opts.predictor == 'tournament':
@@ -47,6 +48,12 @@ def simulate(opts, binary):
         predictor_obj = BiModeBP()
     else:
         raise Exception("Unknown predictor " + opts.predictor + ". Known predictors: local, tournament, bimode")
+    """
+    predictor_obj = TournamentBP()
+    predictor_obj.localPredictorSize = opts.local_buffer
+    predictor_obj.globalPredictorSize = opts.global_buffer
+    predictor_obj.BTBEntries = opts.btb_entries
+    predictor_obj.RASSize = opts.ras_size
 
     # create the system we are going to simulate
     system = System()
