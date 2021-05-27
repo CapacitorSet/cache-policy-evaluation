@@ -14,3 +14,5 @@ For detailed information refer to the `docs/` folder:
  - `branch_prediction_experiments.md` will then explain how to use different branch predictors.
  - `single_simulations.md` and `existing_cpus.md` are for one-shot simulations.
  - If you want to hack on this project, `tinkering.md` has a few notes to get you up and running on the internals.
+
+Finally, in `notebooks/graphs.html` you can find a simple analysis of simulation data comparing different cache replacement policies in several scenarios.
