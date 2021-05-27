@@ -13,10 +13,18 @@ parser.add_option("-1", "--l1-size", default=1024,
                     help="L1 cache size in bytes"),
 parser.add_option("-2", "--l2-size", default=1024,
                     help="L2 cache size in bytes"),
-parser.add_option("-b", "--predictor", default="local",
+parser.add_option("-P", "--predictor", default="local",
                     help="Branch predictor (one of local, tournament, bimode)"),
-parser.add_option("-P", "--preset", type="string",default="",
+parser.add_option("--preset", type="string",default="",
                     help="Use a known processor (one of cortex-a8, cortex-a9, stm32mp1, stm32h7). Default: no preset")
+parser.add_option("-b", "--btb-entries", type="int",default=8,
+                    help="Number of BTB entries. Default: 8")
+parser.add_option("-B", "--global-buffer", type="int",default=256,
+                    help="Branch prediction buffer size. Default: 256")
+parser.add_option("--local-buffer", type="int",default=1,
+                    help="Gem5 local predictor buffer size. Default: 1")
+parser.add_option("--ras-size", type="int",default=8,
+                    help="Return Address Stack size. Default: 256")
 
 (opts, args) = parser.parse_args()
 

@@ -25,6 +25,10 @@ parser.add_option("-1", "--l1-size", default="1024",
                     help="L1 cache sizes (comma-separated list in bytes). Default: 1024"),
 parser.add_option("-2", "--l2-size", default="0",
                     help="L2 cache sizes (comma-separated list in bytes). Default: 0"),
+parser.add_option("-b", "--btb-entries", type="string",default="8",
+                    help="Number of BTB entries (comma-separated list). Default: 8")
+parser.add_option("-B", "--global-buffer", type="string",default="256",
+                    help="Branch prediction buffer size (comma-separated list). Default: 256")
 
 (opts, args) = parser.parse_args()
 
@@ -60,12 +64,14 @@ policies = opts.policy.split(",")
 # cache_types = opts.cache_type.split(",")
 l1_sizes = opts.l1_size.split(",")
 l2_sizes = opts.l2_size.split(",")
+btb_entries = opts.btb_entries.split(",")
+global_buffers = opts.global_buffer.split(",")
 
 for policy in policies:
     if policy not in ("random","lru","treelru","lip","mru","lfu","fifo","secondchance","nru","rrip","brrip"):
         print("Policy {} is unknown." % policy)
 
-num_combinations = len(policies)*len(l1_sizes)*len(l2_sizes)
+num_combinations = len(policies)*len(l1_sizes)*len(l2_sizes)*len(btb_entries)*len(global_buffers)
 print(f"Iterating over {num_combinations} combinations with {opts.jobs} jobs.")
 
 # write a header line to the csv
@@ -73,9 +79,7 @@ outwriter.writerow(keys + ("num_cycles",))
 i = Value('i', 0)
 
 def process_single(values):
-    # BPU params are hardcoded as we are not concerned with experimenting with different params
-    # It's trivial to add support for them though
-    entry = Entry(*values, btb_entries=8, ras_size=8, global_buffer=256, local_buffer=0)
+    entry = Entry(*values)
     with i.get_lock():
         i.value += 1
         print("[{:.0%}, {}/{}] ".format(i.value/num_combinations, i.value, num_combinations), entry)
@@ -93,6 +97,8 @@ def process_single(values):
         "--policy", entry.policy,
         "--l1-size", entry.l1_size,
         "--l2-size", entry.l2_size,
+        "--btb-entries", entry.btb_entries,
+        "--global-buffer", entry.global_buffer,
         binary
     ], check=True)
 
@@ -103,5 +109,11 @@ def process_single(values):
             outwriter.writerow(values + (num_cycles,))
 
 with Pool(processes=opts.jobs) as pool:
-    iterator = itertools.product(policies, l1_sizes, l2_sizes)
+    # Some params are hardcoded for simplicity. It's trivial to add support for them though
+    # Note that the order must match that of Entry
+    speeds = ["1 GHz"]
+    predictors = ["local"]
+    ras_sizes = ["8"]
+    local_buffers = ["1"]
+    iterator = itertools.product(speeds, policies, l1_sizes, l2_sizes, predictors, btb_entries, global_buffers, local_buffers, ras_sizes)
     pool.map(process_single, iterator)
